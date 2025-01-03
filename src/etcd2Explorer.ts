@@ -220,7 +220,7 @@ export class Etcd2Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
   }
 
   async deleteKeys(prefix: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       try {
         if (this.client != undefined) {
           this.client.del(prefix, { recursive: true }, (err: any, val: any) => {
@@ -234,7 +234,7 @@ export class Etcd2Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
                   }
                   else {
                     console.log(prefix + " deleted" + " [" + this.schema() + "]");
-                    resolve();
+                    resolve(undefined);
                   }
                 });
               }
@@ -244,7 +244,7 @@ export class Etcd2Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
             }
             else {
               console.log(prefix + " deleted" + " [" + this.schema() + "]");
-              resolve();
+              resolve(undefined);
             }
           });
         }
@@ -252,7 +252,7 @@ export class Etcd2Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
           reject("etcd client is not ready.");
         }
       }
-      catch (err) {
+      catch (err: any) {
         reject(err.message);
       }
     });
@@ -369,7 +369,7 @@ export class Etcd2Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
 
   protected async write(key: string, value: any) {
     var self = this;
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.client.set(key, value, (err: any, val: any) => {
         if (err) {
           console.log("Error: writing key (" + key + ") " + err.message + " [" + this.schema() + "]");
@@ -377,7 +377,7 @@ export class Etcd2Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
         }
         else {
           console.log("Written key " + key + " [" + this.schema() + "]");
-          resolve();
+          resolve(undefined);
         }
       });
     });

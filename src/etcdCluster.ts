@@ -488,10 +488,10 @@ export class EtcdCluster extends vscode.TreeItem implements EtcdClusterViewItem 
     tip?: string
   ) {
     super(label, vscode.TreeItemCollapsibleState.None);
-    if (desc != undefined) super.description = desc;
-    super.tooltip = label
-    if (tip) super.tooltip = tip + " : " + context;
-    super.contextValue = context
+    if (desc != undefined) this.description = desc;
+    this.tooltip = label;
+    if (tip) this.tooltip = tip + " : " + context;
+    this.contextValue = context;
     this.members = new Array<EtcdClusterMember>();
     this.clustersRoot = root;
     this.options = options;
@@ -547,11 +547,11 @@ export class EtcdCluster extends vscode.TreeItem implements EtcdClusterViewItem 
       }
       self.leaderId = stats.leaderInfo.leader;
     });
-    let promise = new Promise((resolve) => {
+    let promise = new Promise<void>((resolve) => {
       let timerId = setInterval(() => {
         if (selfStatsDone) {
           clearInterval(timerId);
-          resolve();
+          resolve(undefined);
         }
       }, 100);
     });
@@ -584,11 +584,11 @@ export class EtcdCluster extends vscode.TreeItem implements EtcdClusterViewItem 
       });
     });
 
-    let waitforInitialize = new Promise((resolve) => {
+    let waitforInitialize = new Promise<void>((resolve) => {
       let timerId = setInterval(() => {
         if (!initializing) {
           clearInterval(timerId);
-          resolve();
+          resolve(undefined);
         }
       }, 100);
     });
@@ -630,7 +630,7 @@ export class EtcdLeaderMember extends EtcdClusterMember {
     root: EtcdClusters
   ) {
     super(label, root);
-    super.description = "leader";
+    this.description = "leader";
   }
 }
 

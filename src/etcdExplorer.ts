@@ -607,7 +607,7 @@ export class EtcdExplorerBase {
   }
 
   async deleteKeys(prefix: string) {
-    return new Promise((resolve, reject) => { resolve(); });
+    return new Promise<void>((resolve, reject) => { resolve(undefined); });
   }
 
   async initAllData(node: EtcdNode, callback: Function, ignoreParentKeys?: boolean, recursive?: boolean) {
@@ -618,23 +618,21 @@ export class EtcdExplorerBase {
     var promise = vscode.window.showOpenDialog({ openLabel: "Open JSON File", canSelectFiles: true, canSelectFolders: false, canSelectMany: false, filters: { "Json Files": ["json"] } });
     promise.then(
       async (jsonFile) => {
-
         if (jsonFile && jsonFile.length > 0) {
           vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
             title: "importing JSON to etcd",
             cancellable: true
           }, (progress, token) => {
-            return new Promise(async (resolve) => {
+            return new Promise<void>(async (resolve) => {
               progress.report({ message: "importing " + jsonFile[0].fsPath + " ..." });
-              //console.log(jsonFile);
               var path = jsonFile[0].fsPath;
               const fs = require('fs');
               let rawdata = fs.readFileSync(path);
               let jsonObj = JSON.parse(rawdata);
               await self.jsonToEtcd(jsonObj, token);
               self.refreshData();
-              resolve();
+              resolve(undefined);
             });
           });
         }
@@ -729,11 +727,11 @@ export class EtcdExplorerBase {
       title: "exporting etcd data to JSON",
       cancellable: true
     }, (progress, token) => {
-      return new Promise((resolve) => {
+      return new Promise<void>((resolve) => {
         progress.report({ message: "loading data for " + node.label + " ..." });
         var count = 0;
         self.initAllData(node, this.jsonToTextDocument, false, true);
-        resolve();
+        resolve(undefined);
       });
     });
   }
@@ -908,7 +906,7 @@ export class EtcdLeafNode extends EtcdNode {
     value?: string
   ) {
     super(label, prefix, etcd_explorer, parentNode);
-    super.collapsibleState = vscode.TreeItemCollapsibleState.None;
+    this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     this.isLeaf = true;
     this.data = value;
   }

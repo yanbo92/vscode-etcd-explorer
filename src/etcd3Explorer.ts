@@ -236,7 +236,7 @@ export class Etcd3Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
   }
 
   async deleteKeys(prefix: string) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       if (this.client === undefined) reject();
       if (prefix.endsWith(separator)) {
         const ns = this.client.namespace(prefix);
@@ -248,12 +248,12 @@ export class Etcd3Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
           else {
             console.log(prefix + " all deleted. " + " [" + this.schema() + "]");
             console.log(deleteResponse);
-            resolve();
+            resolve(undefined);
           }
         }).catch((reason: string) => {
           console.log(reason + " [" + this.schema() + "]");
           reject();
-        }); // deletes all keys with the prefix
+        });
       }
       else {
         this.client.delete().key(prefix).then((deleteResponse: any) => {
@@ -264,7 +264,7 @@ export class Etcd3Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
           else {
             console.log(prefix + " deleted." + " [" + this.schema() + "]");
             console.log(deleteResponse);
-            resolve();
+            resolve(undefined);
           }
         }).catch((reason: string) => {
           console.log(reason + " [" + this.schema() + "]");
@@ -394,10 +394,10 @@ export class Etcd3Explorer extends EtcdExplorerBase implements vscode.TreeDataPr
 
   protected async write(key: string, value: any) {
     var self = this;
-    var p = new Promise((resolve, reject) => {
+    var p = new Promise<void>((resolve, reject) => {
       this.client.put(key).value(value).then(() => {
         console.log("Written key " + key + " [" + this.schema() + "]");
-        resolve();
+        resolve(undefined);
       }).catch((reason: string) => {
         console.log("Error: writing key (" + key + ") " + reason + " [" + this.schema() + "]");
         reject(reason);
