@@ -647,7 +647,6 @@ export class EtcdExplorerBase {
     var prefix = node.prefix;
     var keyBox = vscode.window.createInputBox();
     keyBox.title = "Add Key Value";
-    keyBox.prompt = "Please type your key here?";
     var self = this;
     keyBox.onDidAccept(() => {
       var valueBox = vscode.window.createInputBox();
@@ -908,9 +907,11 @@ export class EtcdLeafNode extends EtcdNode {
     value?: string
   ) {
     super(label, prefix, etcd_explorer, parentNode);
-    super.collapsibleState = vscode.TreeItemCollapsibleState.None;
     this.isLeaf = true;
     this.data = value;
+    Object.defineProperty(this, 'collapsibleState', {
+      get: () => vscode.TreeItemCollapsibleState.None
+    });
   }
   contextValue = 'etcdnode_leaf';
 }
